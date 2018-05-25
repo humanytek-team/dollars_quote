@@ -1,38 +1,86 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
+  <template id="mrp_bom_cost_report_usd">
+    <t t-call="report.html_container">
+      <t t-foreach="lines" t-as="line">
+        <t t-call="report.internal_layout">
+          <div class="page">
+            <t t-set="currency" t-value="line['currency']"/>
+            <table class="table table-condensed">
+              <thead>
+                <tr>
+                  <th colspan="11">
+                    <h1><t t-esc="line['name']"/></h1><br/>
+                    <b><t t-esc="line['product_uom_qty']"/>
+                      <t t-esc="line['product_uom'].name"/></b>
+                    <table>
+                      <tbody>
+                        <tr t-foreach="line['attributes']" t-as="attrib">
+                          <td><span t-esc="attrib[0]"/></td>
+                          <td><span t-esc="attrib[1]"/></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <h2>Cost Structure</h2>
+                  </th>
+                </tr>
+                <tr>
+                  <th>Rreference</th>
+                  <th colspan="3">Raw Materials</th>
+                  <th class="col-sm-2 text-right">Quantity</th>
+                  <th class="col-sm-2 text-right">Last purchase</th>
+                  <th class="col-sm-2 text-right">Unit Cost USD</th>
+                  <th class="col-sm-2 text-right">Workforce</th>
+                  <th class="col-sm-2 text-right">GIF</th>
+                  <th class="col-sm-2 text-right">USD by unity</th>
+                  <th class="col-sm-2 text-right">Total Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr t-foreach="line['lines']" t-as="bom_line">
+                  <td class="text-right">
+                    <span t-esc="bom_line['product_id'].default_code"/>
+                  </td>
+                  <td colspan="3">
+                    <span t-att-res-id="bom_line['product_id'].id" res-model="product.product" view-type="form" t-esc="bom_line['product_id'].name"/>
+                  </td>
+                  <td class="text-right">
+                    <span t-esc="bom_line['product_uom_qty']"/>
+                    <span t-esc="bom_line['product_uom'].name" groups="product.group_uom"/>
+                  </td>
+                  <td class="text-right">
+                    <span t-esc="bom_line['last_purchase_date']"/>
+                  </td>
+                  <td class="text-right">
+                    <span t-esc="bom_line['usd_com']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                  </td>
+                  <td class="text-right">
+                    <span t-esc="bom_line['workforce']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                  </td>
+                  <td class="text-right">
+                    <span t-esc="bom_line['gif']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                  </td>
+                  <td class="text-right">
+                    <span t-esc="bom_line['total_usd']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                  </td>
+                  <td class="text-right">
+                    <span t-esc="bom_line['total_price']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                  </td>
+                </tr>
+                <tr>
+                  <th colspan="10" class="text-right">Total Cost of Raw Materials</th>
+                  <th class="text-right">
+                    <span t-esc="line['total']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </t>
+      </t>
+    </t>
+  </template>
   <data>
-    <template id="dollars_quote_mrp_bom_cost_report" inherit_id="mrp.mrp_bom_cost_report">
-      <xpath expr="//thead//tr[1]//th" position="attributes">
-        <attribute name="colspan">9</attribute>
-      </xpath>
-
-      <xpath expr="//thead//tr[2]//th[2]" position="before">
-        <th>Reference</th>
-      </xpath>
-
-      <xpath expr="//thead//tr[2]//th[2]" position="after">
-        <th class="col-sm-2 text-right">Last purchase</th>
-        <th class="col-sm-2 text-right">Total USD</th>
-      </xpath>
-
-      <xpath expr="//div//table//tbody//tr//td[@class='text-right'][1]" position="before">
-        <td>
-          <span t-esc="bom_line['product_id'].default_code"/>
-        </td>
-      </xpath>
-
-      <xpath expr="//div//table//tbody//tr//td[@class='text-right'][1]" position="before">
-        <td class="text-right">
-          <span t-esc="bom_line['last_purchase_date']"/>
-        </td>
-        <td class="text-right">
-          <span t-esc="bom_line['total_usd']" t-options='{"widget": "monetary", "display_currency": currency}'/>
-        </td>
-      </xpath>
-
-      <xpath expr="//div//table//tbody//tr[2]//th[1]" position="attributes">
-        <attribute name="colspan">8</attribute>
-      </xpath>
-    </template>
+    <report string="BOM Cost USD" id="action_report_bom_price_usd" model="mrp.bom" name="mrp_bom_cost_usd" file="mrp_bom_cost_usd" report_type="qweb-html"/>
   </data>
 </odoo>

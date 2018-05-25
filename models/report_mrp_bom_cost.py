@@ -2,7 +2,7 @@ from odoo import api, fields, models
 
 
 class ReportMRPBoMCost(models.AbstractModel):
-    _inherit = 'report.mrp_bom_cost'
+    _name = 'report.mrp_bom_cost_usd'
 
     @api.multi
     def get_lines(self, boms):
@@ -26,13 +26,15 @@ class ReportMRPBoMCost(models.AbstractModel):
                     total_usd = bom_line.product_id.usd_com + bom_line.product_id.workforce + bom_line.product_id.gif
                     price_uom = bom_line.product_id.uom_id._compute_price(bom_line.product_id.standard_price, bom_line.product_uom_id)
                     line = {
+                        'gif': bom_line.product_id.gif,
                         'last_purchase_date': self._get_last_purchase_date(bom_line.product_id),
-                        'price_unit': price_uom,
                         'product_id': bom_line.product_id,
                         'product_uom_qty': line_data['qty'],  # line_data needed for phantom bom explosion
                         'product_uom': bom_line.product_uom_id,
-                        'total_price': price_uom * line_data['qty'],
+                        'total_price': total_usd * line_data['qty'],
                         'total_usd': total_usd,
+                        'usd_com': bom_line.product_id.usd_com,
+                        'workforce': bom_line.product_id.workforce,
                     }
                     total += line['total_price']
                     product_line['lines'] += [line]
@@ -55,3 +57,9 @@ class ReportMRPBoMCost(models.AbstractModel):
                         last_purchase = line.order_id
                 return last_purchase.date_approve
         return False
+
+    @api.model
+    def render_html(self, docids, data=None):
+        boms = self.env['mrp.bom'].browse(docids)
+        res = self.get_lines(boms)
+        return self.env['report'].render('dollars_quote.mrp_bom_cost_report_usd', {'lines': res})
