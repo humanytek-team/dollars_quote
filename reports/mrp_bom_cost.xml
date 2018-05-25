@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <template id="dollars_quote_mrp_bom_cost_report" inherit_id="mrp.mrp_bom_cost_report">
+      <xpath expr="//thead//tr[1]//th" position="attributes">
+        <attribute name="colspan">9</attribute>
+      </xpath>
+
+      <xpath expr="//thead//tr[2]//th[2]" position="before">
+        <th>Reference</th>
+      </xpath>
+
+      <xpath expr="//thead//tr[2]//th[2]" position="after">
+        <th class="col-sm-2 text-right">Last purchase</th>
+        <th class="col-sm-2 text-right">Total USD</th>
+      </xpath>
+
+      <xpath expr="//div//table//tbody//tr//td[@class='text-right'][1]" position="before">
+        <td>
+          <span t-esc="bom_line['product_id'].default_code"/>
+        </td>
+      </xpath>
+
+      <xpath expr="//div//table//tbody//tr//td[@class='text-right'][1]" position="before">
+        <td class="text-right">
+          <span t-esc="bom_line['last_purchase_date']"/>
+        </td>
+        <td class="text-right">
+          <span t-esc="bom_line['total_usd']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+        </td>
+      </xpath>
+
+      <xpath expr="//div//table//tbody//tr[2]//th[1]" position="attributes">
+        <attribute name="colspan">8</attribute>
+      </xpath>
+    </template>
+  </data>
+</odoo>

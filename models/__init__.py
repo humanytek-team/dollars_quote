@@ -19,4 +19,5 @@
 ##############################################################################
 
 from . import product_product
+from . import report_mrp_bom_cost
 from . import sale_order_line

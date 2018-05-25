@@ -26,9 +26,11 @@
     'depends': [
         'product',
         'purchase',
+        'report',
         'sale',
     ],
     'data': [
+        'reports/mrp_bom_cost.xml',
         'views/product_product.xml',
         'views/sale_order.xml',
     ]
