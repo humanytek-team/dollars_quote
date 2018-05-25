@@ -25,8 +25,10 @@
     'website': 'http://humanytek.com',
     'depends': [
         'product',
+        'sale',
     ],
     'data': [
         'views/product_product.xml',
+        'views/sale_order.xml',
     ]
 }
