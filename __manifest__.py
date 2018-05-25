@@ -25,6 +25,7 @@
     'website': 'http://humanytek.com',
     'depends': [
         'product',
+        'purchase',
         'sale',
     ],
     'data': [
